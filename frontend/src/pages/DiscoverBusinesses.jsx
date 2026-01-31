@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const API_BASE = 'http://127.0.0.1:5000';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5000';
 
 const CATEGORIES = [
     { value: 'all', label: '🌟 All Categories' },
@@ -76,8 +76,8 @@ const DiscoverBusinesses = () => {
                             key={cat.value}
                             onClick={() => setCategory(cat.value)}
                             className={`px-4 py-2 rounded-xl font-bold transition ${category === cat.value
-                                    ? 'bg-green-600 text-white'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                ? 'bg-green-600 text-white'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             {cat.label}
