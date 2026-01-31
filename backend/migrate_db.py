@@ -45,8 +45,13 @@ def migrate():
         return
 
     try:
-        # Connect with SSL bypass to handle local certificate issues
-        atlas_client = MongoClient(atlas_uri, tls=True, tlsAllowInvalidCertificates=True)
+        from pymongo.server_api import ServerApi
+        
+        # Connect using certifi for valid SSL certificates + ServerApi v1
+        atlas_client = MongoClient(atlas_uri, 
+                                 tlsCAFile=certifi.where(),
+                                 server_api=ServerApi('1'))
+                                 
         # Force a connection check
         atlas_client.admin.command('ping')
         
