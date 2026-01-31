@@ -9,12 +9,8 @@ app = Flask(__name__)
 app.url_map.strict_slashes = False  # Prevent trailing slash redirects
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-# Test DB Connection on startup
-try:
-    db = get_db()
-    print("Connected to MongoDB")
-except Exception as e:
-    print(f"Error connecting to MongoDB: {e}")
+# Database connection is handled lazily in routes/models to ensure fork-safety with Gunicorn
+# Do not initialize get_db() here at module level
 
 # Import and register blueprints
 from routes.auth import auth_bp
