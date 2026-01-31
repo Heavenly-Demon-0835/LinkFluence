@@ -24,9 +24,10 @@ def get_db():
             except Exception as e:
                 print(f"⚠️ Secure Connection Failed: {e}")
                 print("🔄 Retrying with Insecure SSL (Bypass)...")
-                # Strategy 2: Fallback to Insecure (Bypass)
+                # Strategy 2: Fallback to Insecure (Bypass) + Certifi
                 client = MongoClient(MONGO_URI, 
                                    tls=True,
+                                   tlsCAFile=certifi.where(),
                                    tlsAllowInvalidCertificates=True,
                                    serverSelectionTimeoutMS=30000)
         else:
