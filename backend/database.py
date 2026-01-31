@@ -8,5 +8,8 @@ def get_db():
     if _db is None:
         MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/linkfluence")
         client = MongoClient(MONGO_URI)
-        _db = client.get_database()
+        try:
+            _db = client.get_database()
+        except Exception:
+            _db = client.get_database("linkfluence")
     return _db
