@@ -1,0 +1,245 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global Design Tokens */
+:root {
+  /* Status Colors */
+  --success: #22c55e;
+  --success-bg: #dcfce7;
+  --warning: #f59e0b;
+  --warning-bg: #fef3c7;
+  --error: #ef4444;
+  --error-bg: #fee2e2;
+  --info: #3b82f6;
+  --info-bg: #dbeafe;
+  
+  /* Base sizing */
+  font-size: 18px;
+}
+
+/* Larger, more readable text */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+}
+
+/* Status utility classes */
+.status-success {
+  background-color: var(--success-bg);
+  color: #166534;
+  border-left: 4px solid var(--success);
+}
+
+.status-warning {
+  background-color: var(--warning-bg);
+  color: #92400e;
+  border-left: 4px solid var(--warning);
+}
+
+.status-error {
+  background-color: var(--error-bg);
+  color: #991b1b;
+  border-left: 4px solid var(--error);
+}
+
+.status-info {
+  background-color: var(--info-bg);
+  color: #1e40af;
+  border-left: 4px solid var(--info);
+}
+
+/* Friendly error message box */
+.error-box {
+  background-color: var(--error-bg);
+  color: #991b1b;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  border-left: 4px solid var(--error);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.success-box {
+  background-color: var(--success-bg);
+  color: #166534;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  border-left: 4px solid var(--success);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Large, clear input fields */
+.input-large {
+  font-size: 1.125rem;
+  padding: 0.875rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-large:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Primary action button */
+.btn-primary {
+  background-color: #3b82f6;
+  color: white;
+  font-size: 1.125rem;
+  font-weight: 700;
+  padding: 0.875rem 1.5rem;
+  border-radius: 0.75rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+}
+
+.btn-primary:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Smooth animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Dark Mode Styles */
+.dark body {
+  background-color: #0f172a;
+  color: #e2e8f0;
+}
+
+.dark .bg-white {
+  background-color: #1e293b !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: #334155 !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: #334155 !important;
+}
+
+.dark .text-gray-900 {
+  color: #f1f5f9 !important;
+}
+
+.dark .text-gray-800 {
+  color: #e2e8f0 !important;
+}
+
+.dark .text-gray-700 {
+  color: #cbd5e1 !important;
+}
+
+.dark .text-gray-600 {
+  color: #94a3b8 !important;
+}
+
+.dark .text-gray-500 {
+  color: #64748b !important;
+}
+
+.dark .text-gray-400 {
+  color: #94a3b8 !important;
+}
+
+.dark .border-gray-100 {
+  border-color: #334155 !important;
+}
+
+.dark .border-gray-200 {
+  border-color: #475569 !important;
+}
+
+.dark .border-gray-300 {
+  border-color: #475569 !important;
+}
+
+.dark .input-large {
+  background-color: #1e293b;
+  border-color: #475569;
+  color: #f1f5f9;
+}
+
+.dark .input-large:focus {
+  border-color: #3b82f6;
+}
+
+.dark .input-large::placeholder {
+  color: #64748b;
+}
+
+.dark select {
+  background-color: #1e293b;
+  color: #f1f5f9;
+  border-color: #475569;
+}
+
+.dark textarea {
+  background-color: #1e293b;
+  color: #f1f5f9;
+  border-color: #475569;
+}
+
+.dark .shadow-sm,
+.dark .shadow-md,
+.dark .shadow-lg {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark .hover\:shadow-lg:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Dark mode for category filter buttons */
+.dark button.bg-gray-100 {
+  background-color: #334155 !important;
+  color: #cbd5e1 !important;
+}
+
+.dark button.bg-gray-100:hover {
+  background-color: #475569 !important;
+}
+
+/* Dark mode for service package tags */
+.dark .bg-green-100 {
+  background-color: rgba(34, 197, 94, 0.2) !important;
+}
+
+.dark .bg-purple-100 {
+  background-color: rgba(168, 85, 247, 0.2) !important;
+}
+
+.dark .bg-blue-100 {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+/* Modal dark mode */
+.dark .bg-black\/50 {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+}
