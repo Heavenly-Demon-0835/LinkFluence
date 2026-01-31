@@ -30,8 +30,9 @@ def get_db():
             try:
                 _db = client.get_database()
             except Exception:
-                db_name = MongoClient(MONGO_URI).get_default_database().name
-                _db = client.get_database(db_name or "linkfluence")
+                # If URI has no database, explicit fallback
+                print("⚠️ No database in URI, using default 'linkfluence'")
+                _db = client.get_database("linkfluence")
                 
         except Exception as e:
             print(f"❌ Connection Failed: {e}")
