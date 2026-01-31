@@ -12,6 +12,8 @@ const SimpleLayout = ({ children }) => {
         return saved === 'true';
     });
 
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
     useEffect(() => {
         localStorage.setItem('darkMode', darkMode);
         if (darkMode) {
@@ -36,8 +38,16 @@ const SimpleLayout = ({ children }) => {
                         Linkfluence
                     </Link>
 
-                    {/* Navigation Links */}
-                    <div className="flex items-center space-x-4">
+                    {/* Mobile Menu Button */}
+                    <button
+                        className="md:hidden p-2 text-2xl"
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    >
+                        {isMenuOpen ? (darkMode ? '✕' : '✕') : (darkMode ? '☰' : '☰')}
+                    </button>
+
+                    {/* Desktop Navigation */}
+                    <div className="hidden md:flex items-center space-x-4">
                         {/* Dark Mode Toggle */}
                         <button
                             onClick={() => setDarkMode(!darkMode)}
@@ -63,7 +73,7 @@ const SimpleLayout = ({ children }) => {
                                     className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-xl font-bold hover:bg-blue-700 transition"
                                 >
                                     <span className="text-xl">👤</span>
-                                    <span className="hidden md:block">Dashboard</span>
+                                    <span className="hidden lg:block">Dashboard</span>
                                 </Link>
                                 <button onClick={handleLogout} className={`px-5 py-2 rounded-xl text-lg font-bold transition ${darkMode ? 'bg-gray-700 text-gray-200 hover:bg-red-900 hover:text-red-300' : 'bg-gray-200 text-gray-800 hover:bg-red-100 hover:text-red-700'}`}>
                                     Log Out
@@ -72,6 +82,50 @@ const SimpleLayout = ({ children }) => {
                         )}
                     </div>
                 </div>
+
+                {/* Mobile Menu Overlay */}
+                {isMenuOpen && (
+                    <div className={`md:hidden absolute top-full left-0 w-full p-6 shadow-xl border-t ${darkMode ? 'bg-gray-800 border-gray-700 text-gray-100' : 'bg-white border-gray-100 text-gray-900'} animate-fade-in z-40`}>
+                        <div className="flex flex-col space-y-4">
+                            <div className="flex justify-between items-center mb-4">
+                                <span className="font-bold text-gray-500">Theme</span>
+                                <button
+                                    onClick={() => setDarkMode(!darkMode)}
+                                    className={`p-2 rounded-lg flex items-center gap-2 ${darkMode ? 'bg-gray-700 text-yellow-400' : 'bg-gray-100 text-gray-600'}`}
+                                >
+                                    {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+                                </button>
+                            </div>
+
+                            {!isLoggedIn ? (
+                                <>
+                                    <Link to="/login" onClick={() => setIsMenuOpen(false)} className="block w-full py-3 text-center text-lg font-bold border rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                        Log In
+                                    </Link>
+                                    <Link to="/register" onClick={() => setIsMenuOpen(false)} className="block w-full py-3 text-center bg-blue-600 text-white text-lg font-bold rounded-xl hover:bg-blue-700 shadow-lg transition">
+                                        Get Started
+                                    </Link>
+                                </>
+                            ) : (
+                                <>
+                                    <Link
+                                        to={user.role === 'creator' ? '/creator-dashboard' : '/business-dashboard'}
+                                        onClick={() => setIsMenuOpen(false)}
+                                        className="block w-full py-3 text-center bg-blue-600 text-white text-lg font-bold rounded-xl hover:bg-blue-700 transition"
+                                    >
+                                        Go to Dashboard
+                                    </Link>
+                                    <button
+                                        onClick={() => { handleLogout(); setIsMenuOpen(false); }}
+                                        className="block w-full py-3 text-center text-red-500 font-bold border border-red-100 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+                                    >
+                                        Log Out
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                )}
             </nav>
 
             {/* Main Content Area */}
