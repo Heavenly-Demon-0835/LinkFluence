@@ -28,11 +28,23 @@ def get_db():
             print("✅ Connected to MongoDB!")
             
             try:
-                _db = client.get_database()
-            except Exception:
-                # If URI has no database, explicit fallback
-                print("⚠️ No database in URI, using default 'linkfluence'")
-                _db = client.get_database("linkfluence")
+                # 1. Try to get database from URI
+                db_name_from_uri = client.get_database().name
+                _db = client.get_database(db_name_from_uri)
+            except:
+                # 2. Fallback: Check if 'linkfluence' exists in any case
+                target_db = 'linkfluence'
+                try:
+                    existing_dbs = client.list_database_names()
+                    for db_name in existing_dbs:
+                        if db_name.lower() == target_db.lower():
+                            target_db = db_name
+                            break
+                except:
+                    pass
+                
+                print(f"⚠️ Using database: '{target_db}'")
+                _db = client.get_database(target_db)
                 
         except Exception as e:
             print(f"❌ Connection Failed: {e}")

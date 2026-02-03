@@ -29,9 +29,23 @@ def get_db_connection():
         
         # Get database
         try:
-            db = client.get_database()
+            # 1. Try to get database from URI
+            db_name = client.get_database().name
+            db = client.get_database(db_name)
         except:
-             db = client.get_database("linkfluence")
+            # 2. Fallback: Check if 'linkfluence' exists in any case
+            target_db = 'linkfluence'
+            try:
+                existing_dbs = client.list_database_names()
+                for db_name in existing_dbs:
+                    if db_name.lower() == target_db.lower():
+                        target_db = db_name
+                        break
+            except:
+                pass
+                
+            print(f"⚠️ Using database: '{target_db}'")
+            db = client.get_database(target_db)
              
         return db
         
