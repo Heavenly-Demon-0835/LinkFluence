@@ -70,10 +70,10 @@ const SimpleLayout = ({ children }) => {
                             <>
                                 <Link
                                     to={user.role === 'creator' ? '/creator-dashboard' : '/business-dashboard'}
-                                    className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-xl font-bold hover:bg-blue-700 transition"
+                                    className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xl hover:bg-blue-200 transition border border-blue-200"
+                                    title="Go to Dashboard"
                                 >
-                                    <span className="text-xl">👤</span>
-                                    <span className="hidden lg:block">Dashboard</span>
+                                    {user.name ? user.name.charAt(0).toUpperCase() : '👤'}
                                 </Link>
                                 <button onClick={handleLogout} className={`px-5 py-2 rounded-xl text-lg font-bold transition ${darkMode ? 'bg-gray-700 text-gray-200 hover:bg-red-900 hover:text-red-300' : 'bg-gray-200 text-gray-800 hover:bg-red-100 hover:text-red-700'}`}>
                                     Log Out
