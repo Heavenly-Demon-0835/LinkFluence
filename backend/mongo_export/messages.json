@@ -1,0 +1,38 @@
+[
+  {
+    "_id": {
+      "$oid": "697c7bbf338f5d673522ef0d"
+    },
+    "campaign_id": "697c3b7ba111f0d377824568",
+    "sender_id": "697b80bfa2216934c76e2973",
+    "receiver_id": "697b8063a2216934c76e2972",
+    "content": "bachai teri beti",
+    "timestamp": {
+      "$date": "2026-01-30T09:37:03.342Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697c7bd8338f5d673522ef0e"
+    },
+    "campaign_id": "697c3b7ba111f0d377824568",
+    "sender_id": "697b80bfa2216934c76e2973",
+    "receiver_id": "697b8063a2216934c76e2972",
+    "content": "bachai teri bethi",
+    "timestamp": {
+      "$date": "2026-01-30T09:37:28.329Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697d9cace9ee1ad10c002f09"
+    },
+    "campaign_id": "697c3b7ba111f0d377824568",
+    "sender_id": "697b80bfa2216934c76e2973",
+    "receiver_id": "697c7c52338f5d673522ef0f",
+    "content": "yes re chote",
+    "timestamp": {
+      "$date": "2026-01-31T06:09:48.593Z"
+    }
+  }
+]

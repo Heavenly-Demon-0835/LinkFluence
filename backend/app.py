@@ -31,6 +31,14 @@ app.register_blueprint(notifications_bp, url_prefix='/api/notifications')
 def hello():
     return jsonify({"message": "Linkfluence Backend Running", "status": "success"})
 
+# Auto-seed database if empty (for automated deployments)
+try:
+    from seed_db import seed_data
+    print("🌱 Checking database state...")
+    seed_data()
+except Exception as e:
+    print(f"⚠️ Auto-seeding skipped: {e}")
+
 if __name__ == '__main__':
     print("Starting Linkfluence Backend on http://0.0.0.0:5000")
     print("Registered routes:", app.url_map)

@@ -1,0 +1,18 @@
+[
+  {
+    "_id": {
+      "$oid": "697b8107a2216934c76e2974"
+    },
+    "business_id": "697b80bfa2216934c76e2973",
+    "title": "test campaign",
+    "description": "apply for this campaign",
+    "budget": 1000,
+    "created_at": {
+      "$date": "2026-01-29T15:47:19.850Z"
+    },
+    "status": "active",
+    "applicants": [
+      "697b8063a2216934c76e2972"
+    ]
+  }
+]

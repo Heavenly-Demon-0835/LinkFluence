@@ -1,0 +1,92 @@
+[
+  {
+    "_id": {
+      "$oid": "697b8063a2216934c76e2972"
+    },
+    "email": "testuser1@test.com",
+    "password": "scrypt:32768:8:1$pjpBnU2OGkAb5RQK$c7e50c212710b173e5fa93072f530158004c57fe02213a89992a3cd15c13ad5d19d6bb73e038d43fc36f1f962aca64bf4bb82a8ee83149d38798fec095fc191a",
+    "role": "creator",
+    "name": "Raju YT",
+    "industry": "influencer",
+    "budget": {},
+    "categories": [
+      "Tech"
+    ],
+    "social_handles": {},
+    "created_at": {
+      "$date": "2026-01-29T15:44:35.247Z"
+    },
+    "bio": "",
+    "category": "tech",
+    "service_packages": [
+      {
+        "name": "UGC video",
+        "price": "20"
+      }
+    ],
+    "social_links": {
+      "youtube": "",
+      "instagram": "",
+      "tiktok": "",
+      "twitter": ""
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b80bfa2216934c76e2973"
+    },
+    "email": "testuser2@test.com",
+    "password": "scrypt:32768:8:1$HTfu8ZKHsVYSqyoF$bc73d6aa98b58efa7a77346a4bb01f56269610db960b9c0c372f72d24255dd0a9e14605f2a3fae251aef8946d9ce812d122a938786d8319bec73e6f51c132c21",
+    "role": "business",
+    "name": "Dave Solutions",
+    "industry": "Tech",
+    "budget": {},
+    "categories": [],
+    "social_handles": {},
+    "created_at": {
+      "$date": "2026-01-29T15:46:07.484Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697c7c52338f5d673522ef0f"
+    },
+    "email": "testuser3@test.com",
+    "password": "scrypt:32768:8:1$VDxq380SjvROcJ9S$a08fb08400a465afb72809e5c346c5b9916c9b0bb46611ce90e65490740f31b33b0796c8d8665f37d36d8a73fd8ec5920fcb1015603371c6dae746298330d147",
+    "role": "creator",
+    "name": "mc talwinder",
+    "industry": "influencer",
+    "budget": {},
+    "categories": [
+      "Wrapper"
+    ],
+    "social_handles": {},
+    "created_at": {
+      "$date": "2026-01-30T09:39:30.339Z"
+    },
+    "bio": "",
+    "category": "music",
+    "social_links": {
+      "youtube": "",
+      "instagram": "",
+      "tiktok": "",
+      "twitter": ""
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697db7b4a4b538da36a8ac7e"
+    },
+    "email": "testuser4@test.com",
+    "password": "scrypt:32768:8:1$CHjx2IQdnaQD7e6b$b7b4184b419c4675d6402fd6486aee97feefd32eec1555cee5842362751f65a601d12dbbb03e622bfc663bf8a263579c39504a04f8f0e27e19da38a60931fefc",
+    "role": "business",
+    "name": "Dave Infotech",
+    "industry": "Technology",
+    "budget": {},
+    "categories": [],
+    "social_handles": {},
+    "created_at": {
+      "$date": "2026-01-31T08:05:08.281Z"
+    }
+  }
+]
