@@ -123,7 +123,10 @@ const DiscoverCreators = () => {
                                 )}
                             </div>
 
-                            <button className="w-full py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition">
+                            <button
+                                onClick={() => navigate(`/creator/${creator._id}`)}
+                                className="w-full py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition"
+                            >
                                 View Profile
                             </button>
                         </div>

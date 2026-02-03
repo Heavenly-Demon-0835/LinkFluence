@@ -128,7 +128,10 @@ const DiscoverBusinesses = () => {
                                 <p className="text-gray-600 mb-4 line-clamp-2">{business.description}</p>
                             )}
 
-                            <button className="w-full py-3 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700 transition">
+                            <button
+                                onClick={() => navigate(`/business/${business._id}`)}
+                                className="w-full py-3 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700 transition"
+                            >
                                 View Campaigns
                             </button>
                         </div>
