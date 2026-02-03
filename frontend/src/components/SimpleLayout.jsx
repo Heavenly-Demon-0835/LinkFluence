@@ -108,6 +108,15 @@ const SimpleLayout = ({ children }) => {
                                 </>
                             ) : (
                                 <>
+                                    <div className="flex items-center space-x-3 mb-4 px-4 py-2 bg-gray-50 rounded-xl dark:bg-gray-700">
+                                        <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg">
+                                            {user.name ? user.name.charAt(0).toUpperCase() : '👤'}
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="font-bold text-gray-900 dark:text-white truncate">{user.name}</p>
+                                            <p className="text-xs text-gray-500 capitalize">{user.role}</p>
+                                        </div>
+                                    </div>
                                     <Link
                                         to={user.role === 'creator' ? '/creator-dashboard' : '/business-dashboard'}
                                         onClick={() => setIsMenuOpen(false)}

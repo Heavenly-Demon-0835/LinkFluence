@@ -46,11 +46,8 @@ const Login = () => {
 
             localStorage.setItem('user', JSON.stringify(data));
 
-            if (data.role === 'creator') {
-                navigate('/creator-dashboard');
-            } else {
-                navigate('/business-dashboard');
-            }
+            // Redirect to home (which will smart-redirect to discover)
+            navigate('/');
         } catch (err) {
             setError(getFriendlyError(err.message));
             setLoading(false);
