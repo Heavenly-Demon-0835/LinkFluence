@@ -5,17 +5,28 @@ businesses_bp = Blueprint('businesses', __name__)
 
 @businesses_bp.route('/search', methods=['GET'])
 def search_businesses():
-    """Search businesses with optional category filter"""
+    """Search businesses with text search and category filter"""
     from database import get_db
     db = get_db()
     
     category = request.args.get('category')
+    q = request.args.get('q')  # Text search query
     
     query = {'role': 'business'}
+    
+    # Text search filter (name, description, business_type)
+    if q and q.strip():
+        search_regex = {'$regex': q.strip(), '$options': 'i'}
+        query['$or'] = [
+            {'name': search_regex},
+            {'description': search_regex},
+            {'business_type': search_regex}
+        ]
+    
     if category and category != 'all':
         query['business_type'] = category
     
-    businesses = list(db.users.find(query).limit(50))
+    businesses = list(db.users.find(query).limit(100))
     
     results = []
     for b in businesses:

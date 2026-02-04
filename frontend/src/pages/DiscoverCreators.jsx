@@ -9,6 +9,8 @@ const DiscoverCreators = () => {
     const navigate = useNavigate();
     const [creators, setCreators] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [filters, setFilters] = useState({
         category: 'all',
         followerTier: 'all',
@@ -16,6 +18,14 @@ const DiscoverCreators = () => {
         minPrice: '',
         maxPrice: ''
     });
+
+    // Debounce search input
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchQuery);
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
 
     useEffect(() => {
         // Check auth
@@ -25,7 +35,7 @@ const DiscoverCreators = () => {
             return;
         }
         loadCreators();
-    }, [filters]);
+    }, [filters, debouncedSearch]);
 
     const loadCreators = async () => {
         setLoading(true);
@@ -47,6 +57,9 @@ const DiscoverCreators = () => {
             if (filters.maxPrice) {
                 params.append('max_price', filters.maxPrice);
             }
+            if (debouncedSearch.trim()) {
+                params.append('q', debouncedSearch.trim());
+            }
 
             const res = await fetch(`${API_BASE}/api/creators/search?${params.toString()}`);
             const data = await res.json();
@@ -65,6 +78,7 @@ const DiscoverCreators = () => {
             minPrice: '',
             maxPrice: ''
         });
+        setSearchQuery('');
     };
 
     return (
@@ -78,7 +92,27 @@ const DiscoverCreators = () => {
                     ← Back to Dashboard
                 </button>
                 <h1 className="text-4xl font-black mb-2">Discover Creators</h1>
-                <p className="text-xl text-white/80">Find the perfect creators for your campaigns</p>
+                <p className="text-xl text-white/80 mb-4">Find the perfect creators for your campaigns</p>
+
+                {/* Search Bar */}
+                <div className="relative max-w-xl">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60">🔍</span>
+                    <input
+                        type="text"
+                        placeholder="Search by name, category, bio..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-12 pr-10 py-3 rounded-xl bg-white/20 backdrop-blur text-white placeholder-white/60 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50"
+                    />
+                    {searchQuery && (
+                        <button
+                            onClick={() => setSearchQuery('')}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white"
+                        >
+                            ✕
+                        </button>
+                    )}
+                </div>
             </div>
 
             {/* Main Content: Sidebar + Grid */}

@@ -17,9 +17,19 @@ def search_creators():
     platforms = request.args.get('platforms')  # comma-separated
     min_price = request.args.get('min_price')
     max_price = request.args.get('max_price')
+    q = request.args.get('q')  # Text search query
     
     # Base query
     query = {'role': 'creator'}
+    
+    # Text search filter (name, bio, category)
+    if q and q.strip():
+        search_regex = {'$regex': q.strip(), '$options': 'i'}
+        query['$or'] = [
+            {'name': search_regex},
+            {'bio': search_regex},
+            {'category': search_regex}
+        ]
     
     # Category filter
     if category and category != 'all':
