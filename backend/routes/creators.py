@@ -7,18 +7,68 @@ creators_bp = Blueprint('creators', __name__)
 
 @creators_bp.route('/search', methods=['GET'])
 def search_creators():
-    """Search creators with optional category filter"""
+    """Search creators with advanced filters"""
     from database import get_db
     db = get_db()
     
+    # Get filter parameters
     category = request.args.get('category')
+    follower_tier = request.args.get('follower_tier')
+    platforms = request.args.get('platforms')  # comma-separated
+    min_price = request.args.get('min_price')
+    max_price = request.args.get('max_price')
     
+    # Base query
     query = {'role': 'creator'}
+    
+    # Category filter
     if category and category != 'all':
         query['category'] = category
     
-    creators = list(db.users.find(query).limit(50))
+    # Follower tier filter
+    if follower_tier and follower_tier != 'all':
+        if follower_tier == 'nano':
+            query['followers'] = {'$lt': 10000}
+        elif follower_tier == 'micro':
+            query['followers'] = {'$gte': 10000, '$lt': 100000}
+        elif follower_tier == 'macro':
+            query['followers'] = {'$gte': 100000}
     
+    # Platform filter (creators must have at least one of the selected platforms)
+    if platforms and platforms != 'all':
+        platform_list = [p.strip() for p in platforms.split(',') if p.strip()]
+        if platform_list:
+            platform_conditions = []
+            for platform in platform_list:
+                platform_conditions.append({
+                    f'social_links.{platform}': {'$exists': True, '$ne': '', '$ne': None}
+                })
+            query['$or'] = platform_conditions
+    
+    # Fetch creators
+    creators = list(db.users.find(query).limit(200))
+    
+    # Client-side price filtering (since we need to check service_packages array)
+    if min_price or max_price:
+        min_p = float(min_price) if min_price else 0
+        max_p = float(max_price) if max_price else float('inf')
+        
+        filtered_creators = []
+        for c in creators:
+            packages = c.get('service_packages', [])
+            if packages:
+                # Check if any package falls within the price range
+                for pkg in packages:
+                    try:
+                        price = float(pkg.get('price', 0))
+                        if min_p <= price <= max_p:
+                            filtered_creators.append(c)
+                            break
+                    except (ValueError, TypeError):
+                        continue
+        creators = filtered_creators
+    
+    # Format results
     results = []
     for c in creators:
         results.append({
