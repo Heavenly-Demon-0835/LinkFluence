@@ -35,7 +35,8 @@ const CreatorDashboard = () => {
         instagram: '',
         tiktok: '',
         twitter: '',
-        service_packages: []
+        service_packages: [],
+        portfolio: []
     });
 
     // Messages state
@@ -224,7 +225,8 @@ const CreatorDashboard = () => {
                                     instagram: profile?.social_links?.instagram || '',
                                     tiktok: profile?.social_links?.tiktok || '',
                                     twitter: profile?.social_links?.twitter || '',
-                                    service_packages: profile?.service_packages || []
+                                    service_packages: profile?.service_packages || [],
+                                    portfolio: profile?.portfolio || []
                                 });
                                 setShowEditProfile(true);
                             }}
@@ -486,56 +488,133 @@ const CreatorDashboard = () => {
                                 </div>
 
                                 {/* Service Packages Section */}
-                                <h3 className="font-bold text-gray-800 mb-3 mt-6">Service Packages</h3>
+                                <h3 className="font-bold text-gray-800 mb-3 mt-6">💼 Service Packages</h3>
                                 <p className="text-sm text-gray-500 mb-3">Add your services with prices so businesses know what you offer</p>
 
                                 <div className="space-y-3 mb-4">
                                     {editForm.service_packages.map((pkg, idx) => (
-                                        <div key={idx} className="flex items-center space-x-2 bg-gray-50 p-3 rounded-xl">
+                                        <div key={idx} className="bg-gray-50 p-3 rounded-xl space-y-2">
+                                            <div className="flex items-center space-x-2">
+                                                <input
+                                                    type="text"
+                                                    className="flex-1 p-2 border border-gray-300 rounded-lg text-sm"
+                                                    value={pkg.name}
+                                                    onChange={e => {
+                                                        const updated = [...editForm.service_packages];
+                                                        updated[idx].name = e.target.value;
+                                                        setEditForm({ ...editForm, service_packages: updated });
+                                                    }}
+                                                    placeholder="Service name (e.g., UGC Video)"
+                                                />
+                                                <span className="text-gray-500">$</span>
+                                                <input
+                                                    type="number"
+                                                    className="w-24 p-2 border border-gray-300 rounded-lg text-sm"
+                                                    value={pkg.price}
+                                                    onChange={e => {
+                                                        const updated = [...editForm.service_packages];
+                                                        updated[idx].price = e.target.value;
+                                                        setEditForm({ ...editForm, service_packages: updated });
+                                                    }}
+                                                    placeholder="Price"
+                                                />
+                                                <button
+                                                    onClick={() => {
+                                                        const updated = editForm.service_packages.filter((_, i) => i !== idx);
+                                                        setEditForm({ ...editForm, service_packages: updated });
+                                                    }}
+                                                    className="text-red-500 hover:text-red-700 font-bold px-2"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
                                             <input
                                                 type="text"
-                                                className="flex-1 p-2 border border-gray-300 rounded-lg text-sm"
-                                                value={pkg.name}
+                                                className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                                                value={pkg.description || ''}
                                                 onChange={e => {
                                                     const updated = [...editForm.service_packages];
-                                                    updated[idx].name = e.target.value;
+                                                    updated[idx].description = e.target.value;
                                                     setEditForm({ ...editForm, service_packages: updated });
                                                 }}
-                                                placeholder="Service name (e.g., UGC Video)"
+                                                placeholder="Brief description (optional)"
                                             />
-                                            <span className="text-gray-500">$</span>
-                                            <input
-                                                type="number"
-                                                className="w-24 p-2 border border-gray-300 rounded-lg text-sm"
-                                                value={pkg.price}
-                                                onChange={e => {
-                                                    const updated = [...editForm.service_packages];
-                                                    updated[idx].price = e.target.value;
-                                                    setEditForm({ ...editForm, service_packages: updated });
-                                                }}
-                                                placeholder="Price"
-                                            />
-                                            <button
-                                                onClick={() => {
-                                                    const updated = editForm.service_packages.filter((_, i) => i !== idx);
-                                                    setEditForm({ ...editForm, service_packages: updated });
-                                                }}
-                                                className="text-red-500 hover:text-red-700 font-bold px-2"
-                                            >
-                                                ×
-                                            </button>
                                         </div>
                                     ))}
                                 </div>
                                 <button
                                     onClick={() => setEditForm({
                                         ...editForm,
-                                        service_packages: [...editForm.service_packages, { name: '', price: '' }]
+                                        service_packages: [...editForm.service_packages, { name: '', price: '', description: '' }]
                                     })}
                                     className="w-full py-2 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-blue-400 hover:text-blue-600 transition"
                                 >
                                     + Add Service Package
                                 </button>
+
+                                {/* Portfolio Gallery Section */}
+                                <h3 className="font-bold text-gray-800 mb-3 mt-6">📸 Portfolio Gallery</h3>
+                                <p className="text-sm text-gray-500 mb-3">Showcase your best work with images (max 6 items)</p>
+
+                                <div className="space-y-3 mb-4">
+                                    {editForm.portfolio.map((item, idx) => (
+                                        <div key={idx} className="bg-purple-50 p-3 rounded-xl space-y-2">
+                                            <input
+                                                type="text"
+                                                className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                                                value={item.title}
+                                                onChange={e => {
+                                                    const updated = [...editForm.portfolio];
+                                                    updated[idx].title = e.target.value;
+                                                    setEditForm({ ...editForm, portfolio: updated });
+                                                }}
+                                                placeholder="Title (e.g., 'Tech Review Video')"
+                                            />
+                                            <input
+                                                type="text"
+                                                className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                                                value={item.image_url}
+                                                onChange={e => {
+                                                    const updated = [...editForm.portfolio];
+                                                    updated[idx].image_url = e.target.value;
+                                                    setEditForm({ ...editForm, portfolio: updated });
+                                                }}
+                                                placeholder="Image URL (paste link to image)"
+                                            />
+                                            <input
+                                                type="text"
+                                                className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                                                value={item.link || ''}
+                                                onChange={e => {
+                                                    const updated = [...editForm.portfolio];
+                                                    updated[idx].link = e.target.value;
+                                                    setEditForm({ ...editForm, portfolio: updated });
+                                                }}
+                                                placeholder="Link to content (optional)"
+                                            />
+                                            <button
+                                                onClick={() => {
+                                                    const updated = editForm.portfolio.filter((_, i) => i !== idx);
+                                                    setEditForm({ ...editForm, portfolio: updated });
+                                                }}
+                                                className="text-red-500 hover:text-red-700 font-bold text-sm"
+                                            >
+                                                × Remove
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                                {editForm.portfolio.length < 6 && (
+                                    <button
+                                        onClick={() => setEditForm({
+                                            ...editForm,
+                                            portfolio: [...editForm.portfolio, { title: '', image_url: '', link: '' }]
+                                        })}
+                                        className="w-full py-2 border-2 border-dashed border-purple-300 rounded-xl text-purple-500 hover:border-purple-400 hover:text-purple-600 transition"
+                                    >
+                                        + Add Portfolio Item
+                                    </button>
+                                )}
 
                                 <div className="flex space-x-4 mt-6">
                                     <button
@@ -556,6 +635,7 @@ const CreatorDashboard = () => {
                                                         bio: editForm.bio,
                                                         category: editForm.category,
                                                         service_packages: editForm.service_packages.filter(p => p.name && p.price),
+                                                        portfolio: editForm.portfolio.filter(p => p.title && p.image_url),
                                                         social_links: {
                                                             youtube: editForm.youtube,
                                                             instagram: editForm.instagram,
@@ -565,7 +645,7 @@ const CreatorDashboard = () => {
                                                     })
                                                 });
                                                 if (res.ok) {
-                                                    setProfile({ ...profile, name: editForm.name, bio: editForm.bio, category: editForm.category, service_packages: editForm.service_packages.filter(p => p.name && p.price), social_links: { youtube: editForm.youtube, instagram: editForm.instagram, tiktok: editForm.tiktok, twitter: editForm.twitter } });
+                                                    setProfile({ ...profile, name: editForm.name, bio: editForm.bio, category: editForm.category, service_packages: editForm.service_packages.filter(p => p.name && p.price), portfolio: editForm.portfolio.filter(p => p.title && p.image_url), social_links: { youtube: editForm.youtube, instagram: editForm.instagram, tiktok: editForm.tiktok, twitter: editForm.twitter } });
                                                     showNotification('success', 'Profile updated!');
                                                     setShowEditProfile(false);
                                                 } else {

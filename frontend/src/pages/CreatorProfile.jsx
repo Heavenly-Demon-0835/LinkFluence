@@ -16,7 +16,7 @@ const CreatorProfile = () => {
                 const res = await fetch(`${API_BASE}/api/creators/${id}`);
                 if (!res.ok) throw new Error('Creator not found');
                 const data = await res.json();
-                setCreator(data);
+                setCreator(data.profile || data);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -119,9 +119,41 @@ const CreatorProfile = () => {
                                 {creator.social_links.tiktok && (
                                     <a href={creator.social_links.tiktok} target="_blank" rel="noopener noreferrer"
                                         className="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-gray-200">
-                                        TikTok
+                                        🎵 TikTok
                                     </a>
                                 )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Portfolio Gallery */}
+                    {creator.portfolio && creator.portfolio.length > 0 && (
+                        <div className="mb-6">
+                            <h2 className="font-bold text-gray-700 mb-3">📸 Portfolio</h2>
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                {creator.portfolio.map((item, i) => (
+                                    <a
+                                        key={i}
+                                        href={item.link || item.image_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="group relative aspect-square rounded-xl overflow-hidden shadow-md hover:shadow-xl transition"
+                                    >
+                                        <img
+                                            src={item.image_url}
+                                            alt={item.title}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                                            onError={(e) => {
+                                                e.target.src = 'https://via.placeholder.com/300x300?text=Image';
+                                            }}
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition">
+                                            <p className="absolute bottom-2 left-2 right-2 text-white font-bold text-sm truncate">
+                                                {item.title}
+                                            </p>
+                                        </div>
+                                    </a>
+                                ))}
                             </div>
                         </div>
                     )}
@@ -129,12 +161,17 @@ const CreatorProfile = () => {
                     {/* Service Packages */}
                     {creator.service_packages && creator.service_packages.length > 0 && (
                         <div className="mb-6">
-                            <h2 className="font-bold text-gray-700 mb-3">Services Offered</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <h2 className="font-bold text-gray-700 mb-3">💼 Services Offered</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {creator.service_packages.map((pkg, i) => (
-                                    <div key={i} className="bg-green-50 p-4 rounded-xl border border-green-200">
-                                        <p className="font-bold text-gray-900">{pkg.name}</p>
-                                        <p className="text-green-600 font-black text-xl">${pkg.price}</p>
+                                    <div key={i} className="bg-gradient-to-br from-green-50 to-emerald-50 p-5 rounded-2xl border border-green-200 hover:shadow-md transition">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <p className="font-bold text-gray-900 text-lg">{pkg.name}</p>
+                                            <p className="text-green-600 font-black text-xl bg-white px-3 py-1 rounded-lg shadow-sm">${pkg.price}</p>
+                                        </div>
+                                        {pkg.description && (
+                                            <p className="text-gray-600 text-sm">{pkg.description}</p>
+                                        )}
                                     </div>
                                 ))}
                             </div>

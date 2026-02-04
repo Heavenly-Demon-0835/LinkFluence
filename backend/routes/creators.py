@@ -29,7 +29,8 @@ def search_creators():
             'category': c.get('category', 'Other'),
             'followers': c.get('followers', 0),
             'social_links': c.get('social_links', {}),
-            'service_packages': c.get('service_packages', [])
+            'service_packages': c.get('service_packages', []),
+            'portfolio': c.get('portfolio', [])
         })
     
     return jsonify(results)
@@ -69,6 +70,8 @@ def update_creator_profile(user_id):
         update_fields['social_links'] = data['social_links']
     if 'service_packages' in data:
         update_fields['service_packages'] = data['service_packages']
+    if 'portfolio' in data:
+        update_fields['portfolio'] = data['portfolio']
     
     if update_fields:
         from database import get_db
