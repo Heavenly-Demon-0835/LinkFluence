@@ -80,7 +80,9 @@ def search_creators():
             'followers': c.get('followers', 0),
             'social_links': c.get('social_links', {}),
             'service_packages': c.get('service_packages', []),
-            'portfolio': c.get('portfolio', [])
+            'portfolio': c.get('portfolio', []),
+            'average_rating': c.get('average_rating', 0),
+            'review_count': c.get('review_count', 0)
         })
     
     return jsonify(results)

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import StarRating from '../components/StarRating';
+import ReviewModal from '../components/ReviewModal';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5000';
 
@@ -9,22 +11,56 @@ const CreatorProfile = () => {
     const [creator, setCreator] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [reviews, setReviews] = useState([]);
+    const [reviewStats, setReviewStats] = useState({ average_rating: 0, review_count: 0 });
+    const [showReviewModal, setShowReviewModal] = useState(false);
+
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const isBusinessUser = user.role === 'business';
 
     useEffect(() => {
-        const fetchCreator = async () => {
-            try {
-                const res = await fetch(`${API_BASE}/api/creators/${id}`);
-                if (!res.ok) throw new Error('Creator not found');
-                const data = await res.json();
-                setCreator(data.profile || data);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchCreator();
+        fetchReviews();
     }, [id]);
+
+    const fetchCreator = async () => {
+        try {
+            const res = await fetch(`${API_BASE}/api/creators/${id}`);
+            if (!res.ok) throw new Error('Creator not found');
+            const data = await res.json();
+            setCreator(data.profile || data);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchReviews = async () => {
+        try {
+            const res = await fetch(`${API_BASE}/api/reviews/creator/${id}`);
+            const data = await res.json();
+            setReviews(data.reviews || []);
+            setReviewStats({
+                average_rating: data.average_rating || 0,
+                review_count: data.review_count || 0
+            });
+        } catch (err) {
+            console.error('Failed to fetch reviews:', err);
+        }
+    };
+
+    const formatDate = (isoString) => {
+        const date = new Date(isoString);
+        const now = new Date();
+        const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 0) return 'Today';
+        if (diffDays === 1) return 'Yesterday';
+        if (diffDays < 7) return `${diffDays} days ago`;
+        if (diffDays < 30) return `${Math.floor(diffDays / 7)} week${Math.floor(diffDays / 7) > 1 ? 's' : ''} ago`;
+        return date.toLocaleDateString();
+    };
 
     if (loading) {
         return (
@@ -53,27 +89,36 @@ const CreatorProfile = () => {
             {/* Header */}
             <button
                 onClick={() => navigate(-1)}
-                className="mb-6 text-gray-500 hover:text-gray-700 font-bold"
+                className="text-gray-600 hover:text-gray-900 mb-4 flex items-center"
             >
-                ← Back to Discovery
+                ← Back
             </button>
 
-            {/* Profile Card */}
-            <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg overflow-hidden">
-                {/* Banner */}
-                <div className="h-32 bg-gradient-to-r from-purple-500 to-blue-500"></div>
+            <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
+                {/* Cover Image / Gradient */}
+                <div className="h-48 bg-gradient-to-r from-purple-500 to-blue-500"></div>
 
-                {/* Profile Info */}
-                <div className="p-8 -mt-16">
-                    <div className="flex items-end space-x-6 mb-6">
-                        <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-purple-400 to-blue-500 flex items-center justify-center text-4xl text-white font-bold border-4 border-white dark:border-gray-800 shadow-lg">
-                            {creator.name?.charAt(0)?.toUpperCase() || '?'}
-                        </div>
-                        <div>
-                            <h1 className="text-3xl font-black text-gray-900">{creator.name}</h1>
-                            <p className="text-gray-500 capitalize">{creator.category || 'Creator'}</p>
+                {/* Profile Section */}
+                <div className="px-8 pb-8">
+                    {/* Avatar */}
+                    <div className="-mt-16 mb-4">
+                        <div className="w-32 h-32 rounded-full bg-white p-1 shadow-xl">
+                            <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-400 to-blue-500 flex items-center justify-center text-5xl text-white font-bold">
+                                {creator.name?.charAt(0)?.toUpperCase() || '?'}
+                            </div>
                         </div>
                     </div>
+
+                    {/* Name & Category */}
+                    <h1 className="text-3xl font-black text-gray-900">{creator.name}</h1>
+                    <p className="text-gray-500 mb-2">{creator.category || 'Creator'}</p>
+
+                    {/* Rating */}
+                    {reviewStats.review_count > 0 && (
+                        <div className="mb-4">
+                            <StarRating rating={reviewStats.average_rating} reviewCount={reviewStats.review_count} size="md" />
+                        </div>
+                    )}
 
                     {/* Bio */}
                     {creator.bio && (
@@ -178,12 +223,73 @@ const CreatorProfile = () => {
                         </div>
                     )}
 
+                    {/* Reviews Section */}
+                    <div className="mb-6">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="font-bold text-gray-700">⭐ Reviews</h2>
+                            {isBusinessUser && (
+                                <button
+                                    onClick={() => setShowReviewModal(true)}
+                                    className="text-blue-600 hover:text-blue-700 font-bold text-sm"
+                                >
+                                    + Leave a Review
+                                </button>
+                            )}
+                        </div>
+
+                        {reviewStats.review_count > 0 ? (
+                            <div className="space-y-4">
+                                <div className="bg-yellow-50 p-4 rounded-xl border border-yellow-200">
+                                    <StarRating rating={reviewStats.average_rating} size="lg" />
+                                    <p className="text-gray-600 text-sm mt-1">Based on {reviewStats.review_count} review{reviewStats.review_count !== 1 ? 's' : ''}</p>
+                                </div>
+
+                                {reviews.map((review, i) => (
+                                    <div key={i} className="bg-gray-50 p-4 rounded-xl">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <StarRating rating={review.rating} size="sm" />
+                                            <span className="text-xs text-gray-500">{formatDate(review.created_at)}</span>
+                                        </div>
+                                        {review.comment && (
+                                            <p className="text-gray-700 mb-2">"{review.comment}"</p>
+                                        )}
+                                        <p className="text-sm text-gray-500">— {review.reviewer_name}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="bg-gray-50 p-6 rounded-xl text-center">
+                                <p className="text-gray-500">No reviews yet</p>
+                                {isBusinessUser && (
+                                    <button
+                                        onClick={() => setShowReviewModal(true)}
+                                        className="mt-3 bg-blue-600 text-white px-4 py-2 rounded-xl font-bold text-sm hover:bg-blue-700"
+                                    >
+                                        Be the first to review
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
                     {/* Contact Button */}
                     <button className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold text-lg hover:bg-blue-700 transition">
                         Contact Creator
                     </button>
                 </div>
             </div>
+
+            {/* Review Modal */}
+            <ReviewModal
+                isOpen={showReviewModal}
+                onClose={() => setShowReviewModal(false)}
+                creatorId={id}
+                creatorName={creator.name}
+                onReviewSubmitted={() => {
+                    fetchReviews();
+                    fetchCreator();
+                }}
+            />
         </div>
     );
 };

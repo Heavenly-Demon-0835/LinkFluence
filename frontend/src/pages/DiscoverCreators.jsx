@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FilterSidebar from '../components/FilterSidebar';
+import StarRating from '../components/StarRating';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5000';
 
@@ -117,6 +118,9 @@ const DiscoverCreators = () => {
                                             <div className="flex-1">
                                                 <h3 className="text-xl font-bold text-gray-900">{creator.name}</h3>
                                                 <p className="text-sm text-gray-500">{creator.category || 'Creator'}</p>
+                                                {creator.average_rating > 0 && (
+                                                    <StarRating rating={creator.average_rating} reviewCount={creator.review_count} size="sm" />
+                                                )}
                                             </div>
                                         </div>
 
