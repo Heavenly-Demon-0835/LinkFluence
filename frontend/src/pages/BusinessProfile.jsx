@@ -11,6 +11,7 @@ const BusinessProfile = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [user, setUser] = useState(null);
+    const [campaignAppCounts, setCampaignAppCounts] = useState({});
 
     useEffect(() => {
         const userStr = localStorage.getItem('user');
@@ -33,7 +34,20 @@ const BusinessProfile = () => {
                 // Fetch campaigns for this business
                 const campRes = await fetch(`${API_BASE}/api/campaigns?business_id=${id}`);
                 const campData = await campRes.json();
-                setCampaigns(Array.isArray(campData) ? campData : []);
+                const campaignsArray = Array.isArray(campData) ? campData : [];
+                setCampaigns(campaignsArray);
+
+                // Fetch application counts for each campaign
+                campaignsArray.forEach(camp => {
+                    fetch(`${API_BASE}/api/applications/campaign/${camp._id}`)
+                        .then(r => r.json())
+                        .then(apps => {
+                            if (Array.isArray(apps)) {
+                                setCampaignAppCounts(prev => ({ ...prev, [camp._id]: apps.length }));
+                            }
+                        })
+                        .catch(() => { });
+                });
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -156,7 +170,7 @@ const BusinessProfile = () => {
                                                 ${typeof camp.budget === 'object' ? camp.budget.total_amount : camp.budget}
                                             </span>
                                             <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-bold">
-                                                {camp.applicants?.length || 0} Applicants
+                                                {campaignAppCounts[camp._id] || 0} Applicants
                                             </span>
                                         </div>
                                     </div>

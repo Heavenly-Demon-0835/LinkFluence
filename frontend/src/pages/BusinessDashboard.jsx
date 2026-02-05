@@ -19,6 +19,8 @@ const BusinessDashboard = () => {
     // View Applicants Modal
     const [showApplicants, setShowApplicants] = useState(null); // campaign object
     const [applications, setApplications] = useState([]); // applications for selected campaign
+    const [campaignAppCounts, setCampaignAppCounts] = useState({}); // {campaign_id: count}
+    const [allApplications, setAllApplications] = useState([]); // All applications for messages tab
 
     // Edit Campaign Modal
     const [editCampaign, setEditCampaign] = useState(null); // campaign being edited
@@ -208,9 +210,21 @@ const BusinessDashboard = () => {
                 console.log('Campaigns loaded:', data);
                 if (Array.isArray(data)) {
                     setMyCampaigns(data);
-                    // Fetch names for all applicants
+                    // Fetch application counts for each campaign
                     data.forEach(camp => {
-                        camp.applicants?.forEach(id => fetchCreatorName(id));
+                        fetch(`${API_BASE}/api/applications/campaign/${camp._id}`)
+                            .then(r => r.json())
+                            .then(apps => {
+                                if (Array.isArray(apps)) {
+                                    setCampaignAppCounts(prev => ({ ...prev, [camp._id]: apps.length }));
+                                    // Store applications for messages tab
+                                    setAllApplications(prev => {
+                                        const filtered = prev.filter(a => a.campaign_id !== camp._id);
+                                        return [...filtered, ...apps.map(a => ({ ...a, campaign_title: camp.title }))];
+                                    });
+                                }
+                            })
+                            .catch(() => { });
                     });
                 } else {
                     console.error('Campaigns response is not an array:', data);
@@ -589,7 +603,7 @@ const BusinessDashboard = () => {
                                                 ${getBudgetDisplay(camp.budget)}
                                             </span>
                                             <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-bold">
-                                                {camp.applicants?.length || 0} Applicants
+                                                {campaignAppCounts[camp._id] || 0} Applicants
                                             </span>
                                         </div>
                                     </div>
@@ -678,37 +692,34 @@ const BusinessDashboard = () => {
                         <div className="divide-y divide-gray-100">
                             {myCampaigns.length === 0 ? (
                                 <div className="p-6 text-center text-gray-500">No conversations yet.</div>
+                            ) : allApplications.length === 0 ? (
+                                <div className="p-6 text-center text-gray-500">No applicants to message yet.</div>
                             ) : (
-                                myCampaigns.filter(c => c.applicants?.length > 0).map((camp) => (
-                                    camp.applicants?.map((creatorId) => {
-                                        const name = applicantNames[creatorId] || 'Creator';
-                                        return (
-                                            <div
-                                                key={`${camp._id}-${creatorId}`}
-                                                onClick={() => {
-                                                    setSelectedChat({
-                                                        campaign_id: camp._id,
-                                                        campaign_title: camp.title,
-                                                        creator_id: creatorId,
-                                                        creator_name: name
-                                                    });
-                                                    loadMessages(camp._id, creatorId);
-                                                }}
-                                                className={`p-4 cursor-pointer hover:bg-blue-50 transition ${selectedChat?.creator_id === creatorId && selectedChat?.campaign_id === camp._id ? 'bg-blue-100' : ''
-                                                    }`}
-                                            >
-                                                <div className="flex items-center space-x-3">
-                                                    <div className="w-10 h-10 rounded-full bg-purple-200 flex items-center justify-center font-bold text-purple-700">
-                                                        {name.charAt(0).toUpperCase()}
-                                                    </div>
-                                                    <div>
-                                                        <p className="font-bold text-gray-900">{name}</p>
-                                                        <p className="text-sm text-gray-500 truncate">Re: {camp.title}</p>
-                                                    </div>
-                                                </div>
+                                allApplications.map((app) => (
+                                    <div
+                                        key={`${app.campaign_id}-${app.creator_id}`}
+                                        onClick={() => {
+                                            setSelectedChat({
+                                                campaign_id: app.campaign_id,
+                                                campaign_title: app.campaign_title || 'Campaign',
+                                                creator_id: app.creator_id,
+                                                creator_name: app.creator_name
+                                            });
+                                            loadMessages(app.campaign_id, app.creator_id);
+                                        }}
+                                        className={`p-4 cursor-pointer hover:bg-blue-50 transition ${selectedChat?.creator_id === app.creator_id && selectedChat?.campaign_id === app.campaign_id ? 'bg-blue-100' : ''
+                                            }`}
+                                    >
+                                        <div className="flex items-center space-x-3">
+                                            <div className="w-10 h-10 rounded-full bg-purple-200 flex items-center justify-center font-bold text-purple-700">
+                                                {app.creator_name?.charAt(0)?.toUpperCase() || 'C'}
                                             </div>
-                                        );
-                                    })
+                                            <div>
+                                                <p className="font-bold text-gray-900">{app.creator_name}</p>
+                                                <p className="text-sm text-gray-500">{app.campaign_title}</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 ))
                             )}
                         </div>

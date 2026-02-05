@@ -23,6 +23,7 @@ const CreatorDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [applying, setApplying] = useState(null);
     const [appliedCampaigns, setAppliedCampaigns] = useState([]);
+    const [myApplications, setMyApplications] = useState([]); // Applications from API
     const [notification, setNotification] = useState(null);
 
     // Edit Profile modal
@@ -145,6 +146,18 @@ const CreatorDashboard = () => {
         fetch(`${API_BASE}/api/creators/${user.user_id}/growth-prediction`)
             .then(r => r.json())
             .then(data => setPrediction(data))
+            .catch(() => { });
+
+        // Fetch creator's applications
+        fetch(`${API_BASE}/api/applications/creator/${user.user_id}`)
+            .then(r => r.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    setMyApplications(data);
+                    // Also set applied campaign IDs for quick lookup
+                    setAppliedCampaigns(data.map(app => app.campaign_id));
+                }
+            })
             .catch(() => { });
 
     }, [navigate]);
@@ -680,9 +693,10 @@ const CreatorDashboard = () => {
                         <div className="divide-y">
                             {(() => {
                                 const user = JSON.parse(localStorage.getItem('user') || '{}');
-                                // Get campaigns where this creator has applied (from API data) OR session-applied
+                                // Get campaigns where this creator has applied (from myApplications)
+                                const appliedCampaignIds = myApplications.map(app => app.campaign_id);
                                 const myConversations = campaigns.filter(c =>
-                                    c.applicants?.includes(user.user_id) || appliedCampaigns.includes(c._id)
+                                    appliedCampaignIds.includes(c._id) || appliedCampaigns.includes(c._id)
                                 );
 
                                 if (myConversations.length === 0) {
