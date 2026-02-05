@@ -50,12 +50,15 @@ const BusinessProfile = () => {
         }
 
         try {
-            const res = await fetch(`${API_BASE}/api/campaigns/${campaignId}/apply`, {
+            const res = await fetch(`${API_BASE}/api/applications/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    campaign_id: campaignId,
                     creator_id: user.user_id,
-                    creator_name: user.name
+                    creator_name: user.name,
+                    cover_letter: '',
+                    bid_amount: 0
                 })
             });
             const data = await res.json();
