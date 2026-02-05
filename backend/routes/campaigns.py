@@ -61,48 +61,7 @@ def get_campaign(campaign_id):
     campaign['created_at'] = campaign['created_at'].isoformat()
     return jsonify(campaign)
 
-@campaigns_bp.route('/<campaign_id>/apply', methods=['POST'])
-def apply_to_campaign(campaign_id):
-    data = request.json
-    creator_id = data.get('creator_id')
-    creator_name = data.get('creator_name', 'A creator')
-    
-    if not creator_id:
-        return jsonify({"error": "Creator ID required"}), 400
-    
-    campaign = Campaign.find_by_id(campaign_id)
-    if not campaign:
-        return jsonify({"error": "Campaign not found"}), 404
-    
-    # Add applicant to campaign
-    from database import get_db
-    from bson.objectid import ObjectId
-    from models.notification import Notification
-    db = get_db()
-    
-    # Check if already applied
-    if campaign.get('applicants') and creator_id in campaign['applicants']:
-        return jsonify({"error": "Already applied"}), 409
-    
-    db.campaigns.update_one(
-        {"_id": ObjectId(campaign_id)},
-        {"$addToSet": {"applicants": creator_id}}
-    )
-    
-    # Create notification for business owner
-    business_id = campaign.get('business_id')
-    if business_id:
-        Notification.create({
-            "user_id": business_id,
-            "type": "new_application",
-            "title": "New Application!",
-            "message": f"{creator_name} applied for your campaign: {campaign.get('title', 'Untitled')}",
-            "campaign_id": campaign_id,
-            "creator_id": creator_id
-        })
-        print(f"[DEBUG] Created notification for business {business_id}")
-    
-    return jsonify({"message": "Application submitted successfully!"}), 200
+# NOTE: Apply endpoint moved to /api/applications/ for better status tracking
 
 @campaigns_bp.route('/<campaign_id>', methods=['PATCH'])
 def update_campaign(campaign_id):
