@@ -18,6 +18,7 @@ const BusinessDashboard = () => {
 
     // View Applicants Modal
     const [showApplicants, setShowApplicants] = useState(null); // campaign object
+    const [applications, setApplications] = useState([]); // applications for selected campaign
 
     // Edit Campaign Modal
     const [editCampaign, setEditCampaign] = useState(null); // campaign being edited
@@ -104,12 +105,45 @@ const BusinessDashboard = () => {
         loadNotificationsForUser(user.user_id);
     }, [navigate]);
 
-    // Fetch applicant names when modal opens
+    // Fetch applications when modal opens
     useEffect(() => {
-        if (showApplicants?.applicants) {
-            showApplicants.applicants.forEach(id => fetchCreatorName(id));
+        if (showApplicants?._id) {
+            loadApplications(showApplicants._id);
         }
     }, [showApplicants]);
+
+    const loadApplications = async (campaignId) => {
+        try {
+            const res = await fetch(`${API_BASE}/api/applications/campaign/${campaignId}`);
+            const data = await res.json();
+            setApplications(data || []);
+        } catch (err) {
+            console.error('Failed to load applications:', err);
+            setApplications([]);
+        }
+    };
+
+    const handleApplicationStatus = async (appId, status) => {
+        try {
+            const res = await fetch(`${API_BASE}/api/applications/${appId}/status`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status })
+            });
+
+            if (res.ok) {
+                showToast('success', `Application ${status}!`);
+                // Reload applications
+                if (showApplicants?._id) {
+                    loadApplications(showApplicants._id);
+                }
+            } else {
+                showToast('error', 'Failed to update status');
+            }
+        } catch (err) {
+            showToast('error', 'Connection error');
+        }
+    };
 
     const loadNotificationsForUser = (userId) => {
         fetch(`${API_BASE}/api/notifications?user_id=${userId}`)
@@ -401,47 +435,82 @@ const BusinessDashboard = () => {
             {/* View Applicants Modal */}
             {showApplicants && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white p-8 rounded-3xl w-full max-w-lg shadow-2xl">
+                    <div className="bg-white p-8 rounded-3xl w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
                         <h2 className="text-2xl font-black mb-2">Applicants</h2>
                         <p className="text-gray-500 mb-6">Campaign: {showApplicants.title}</p>
 
-                        {(!showApplicants.applicants || showApplicants.applicants.length === 0) ? (
+                        {applications.length === 0 ? (
                             <div className="text-center py-10 text-gray-400">
                                 <p className="text-3xl mb-4 text-gray-400">—</p>
                                 <p className="text-lg">No applications yet</p>
                                 <p className="text-sm">Share your campaign to get creators to apply!</p>
                             </div>
                         ) : (
-                            <div className="space-y-3 max-h-80 overflow-y-auto">
-                                {showApplicants.applicants.map((applicantId) => {
-                                    const creatorName = applicantNames[applicantId] || 'Loading...';
+                            <div className="space-y-4">
+                                {applications.map((app) => {
+                                    const statusColors = {
+                                        pending: 'bg-yellow-100 text-yellow-700 border-yellow-300',
+                                        accepted: 'bg-green-100 text-green-700 border-green-300',
+                                        rejected: 'bg-red-100 text-red-700 border-red-300'
+                                    };
                                     return (
-                                        <div key={applicantId} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                                            <div className="flex items-center space-x-3">
-                                                <div className="w-10 h-10 rounded-full bg-purple-200 flex items-center justify-center font-bold text-purple-700">
-                                                    {creatorName.charAt(0).toUpperCase()}
+                                        <div key={app._id} className="p-4 bg-gray-50 rounded-xl border border-gray-200">
+                                            <div className="flex items-start justify-between mb-3">
+                                                <div className="flex items-center space-x-3">
+                                                    <div className="w-12 h-12 rounded-full bg-purple-200 flex items-center justify-center font-bold text-purple-700 text-lg">
+                                                        {app.creator_name?.charAt(0)?.toUpperCase() || 'C'}
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-bold text-gray-900 text-lg">{app.creator_name}</p>
+                                                        <p className="text-sm text-gray-500">{new Date(app.created_at).toLocaleDateString()}</p>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <p className="font-bold text-gray-900">{creatorName}</p>
-                                                    <p className="text-sm text-gray-500">Creator</p>
-                                                </div>
+                                                <span className={`px-3 py-1 rounded-full text-xs font-bold border ${statusColors[app.status]}`}>
+                                                    {app.status.toUpperCase()}
+                                                </span>
                                             </div>
-                                            <button
-                                                onClick={() => {
-                                                    setSelectedChat({
-                                                        campaign_id: showApplicants._id,
-                                                        campaign_title: showApplicants.title,
-                                                        creator_id: applicantId,
-                                                        creator_name: creatorName
-                                                    });
-                                                    loadMessages(showApplicants._id, applicantId);
-                                                    setActiveTab('messages');
-                                                    setShowApplicants(null);
-                                                }}
-                                                className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-blue-700"
-                                            >
-                                                Message
-                                            </button>
+
+                                            {app.cover_letter && (
+                                                <div className="mb-3 p-3 bg-white rounded-lg border border-gray-200">
+                                                    <p className="text-sm text-gray-500 font-bold mb-1">Cover Letter:</p>
+                                                    <p className="text-gray-700 text-sm">{app.cover_letter}</p>
+                                                </div>
+                                            )}
+
+                                            <div className="flex gap-2">
+                                                {app.status === 'pending' && (
+                                                    <>
+                                                        <button
+                                                            onClick={() => handleApplicationStatus(app._id, 'accepted')}
+                                                            className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-green-700"
+                                                        >
+                                                            ✓ Accept
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleApplicationStatus(app._id, 'rejected')}
+                                                            className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-red-700"
+                                                        >
+                                                            ✕ Reject
+                                                        </button>
+                                                    </>
+                                                )}
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedChat({
+                                                            campaign_id: showApplicants._id,
+                                                            campaign_title: showApplicants.title,
+                                                            creator_id: app.creator_id,
+                                                            creator_name: app.creator_name
+                                                        });
+                                                        loadMessages(showApplicants._id, app.creator_id);
+                                                        setActiveTab('messages');
+                                                        setShowApplicants(null);
+                                                    }}
+                                                    className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-blue-700"
+                                                >
+                                                    💬 Message
+                                                </button>
+                                            </div>
                                         </div>
                                     );
                                 })}

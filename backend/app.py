@@ -20,6 +20,7 @@ from routes.campaigns import campaigns_bp
 from routes.messages import messages_bp
 from routes.notifications import notifications_bp
 from routes.reviews import reviews_bp
+from routes.applications import applications_bp
 
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(creators_bp, url_prefix='/api/creators')
@@ -28,6 +29,7 @@ app.register_blueprint(campaigns_bp, url_prefix='/api/campaigns')
 app.register_blueprint(messages_bp, url_prefix='/api/messages')
 app.register_blueprint(notifications_bp, url_prefix='/api/notifications')
 app.register_blueprint(reviews_bp, url_prefix='/api/reviews')
+app.register_blueprint(applications_bp, url_prefix='/api/applications')
 
 @app.route('/')
 def hello():

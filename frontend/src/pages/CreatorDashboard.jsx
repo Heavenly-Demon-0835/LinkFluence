@@ -159,12 +159,15 @@ const CreatorDashboard = () => {
         setApplying(campaignId);
 
         try {
-            const response = await fetch(`${API_BASE}/api/campaigns/${campaignId}/apply`, {
+            const response = await fetch(`${API_BASE}/api/applications/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    campaign_id: campaignId,
                     creator_id: user.user_id,
-                    creator_name: user.name || 'A Creator'
+                    creator_name: user.name || 'A Creator',
+                    cover_letter: '',  // Can add modal for this later
+                    bid_amount: 0
                 })
             });
 
