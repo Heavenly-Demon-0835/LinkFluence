@@ -249,7 +249,12 @@ const BusinessDashboard = () => {
     };
 
     const handleCreate = async () => {
-        if (!newCampaign.title || !newCampaign.description) return;
+        // Validate required fields
+        if (!newCampaign.title || !newCampaign.description) {
+            showToast('error', 'Please fill in all required fields (Title and Description)');
+            return;
+        }
+
         const user = JSON.parse(localStorage.getItem('user'));
 
         try {
@@ -404,15 +409,15 @@ const BusinessDashboard = () => {
                     <div className="bg-white p-8 rounded-3xl w-full max-w-lg shadow-2xl">
                         <h2 className="text-2xl font-black mb-6">Create New Campaign</h2>
 
-                        <label className="block text-gray-700 font-bold mb-2">Campaign Title</label>
-                        <input className="w-full text-lg p-3 border-2 border-gray-300 rounded-xl mb-4"
+                        <label className="block text-gray-700 font-bold mb-2">Campaign Title *</label>
+                        <input className="w-full text-lg p-3 border-2 border-gray-300 rounded-xl mb-4 focus:border-blue-500 focus:outline-none"
                             placeholder="e.g. Summer Sale 2026"
                             value={newCampaign.title}
                             onChange={e => setNewCampaign({ ...newCampaign, title: e.target.value })}
                         />
 
-                        <label className="block text-gray-700 font-bold mb-2">Description</label>
-                        <textarea className="w-full text-lg p-3 border-2 border-gray-300 rounded-xl mb-4 h-32"
+                        <label className="block text-gray-700 font-bold mb-2">Description *</label>
+                        <textarea className="w-full text-lg p-3 border-2 border-gray-300 rounded-xl mb-4 h-32 focus:border-blue-500 focus:outline-none"
                             placeholder="What do you need creators to do?"
                             value={newCampaign.description}
                             onChange={e => setNewCampaign({ ...newCampaign, description: e.target.value })}

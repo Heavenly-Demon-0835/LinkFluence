@@ -272,10 +272,21 @@ const CreatorProfile = () => {
                         )}
                     </div>
 
-                    {/* Contact Button */}
-                    <button className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold text-lg hover:bg-blue-700 transition">
-                        Contact Creator
-                    </button>
+                    {/* Contact Info */}
+                    {isBusinessUser ? (
+                        <div className="bg-blue-50 p-4 rounded-xl border border-blue-200">
+                            <p className="text-blue-800 text-sm font-medium">
+                                💡 To message this creator, create a campaign and they can apply. You'll then be able to chat!
+                            </p>
+                        </div>
+                    ) : (
+                        <button
+                            onClick={() => navigate('/creator-dashboard')}
+                            className="w-full bg-gray-200 text-gray-700 py-3 rounded-xl font-bold text-lg hover:bg-gray-300 transition"
+                        >
+                            Back to Dashboard
+                        </button>
+                    )}
                 </div>
             </div>
 
