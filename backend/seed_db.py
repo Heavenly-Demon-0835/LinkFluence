@@ -32,7 +32,7 @@ def get_db_connection():
         client.admin.command('ping')
         print("✅ Connected to MongoDB!")
         
-        db = client.get_database('linkfluence')
+        db = client.get_database('Linkfluence')
         return db
         
     except Exception as e:

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import Toast from '../components/Toast';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5000';
 
@@ -12,6 +13,11 @@ const BusinessProfile = () => {
     const [error, setError] = useState('');
     const [user, setUser] = useState(null);
     const [campaignAppCounts, setCampaignAppCounts] = useState({});
+    const [toast, setToast] = useState(null);
+
+    const showToast = (type, message) => {
+        setToast({ type, message });
+    };
 
     useEffect(() => {
         const userStr = localStorage.getItem('user');
@@ -77,12 +83,12 @@ const BusinessProfile = () => {
             });
             const data = await res.json();
             if (res.ok) {
-                alert('Application submitted successfully!');
+                showToast('success', '🎉 Application submitted successfully!');
             } else {
-                alert(data.error || 'Failed to apply');
+                showToast('error', data.error || 'Failed to apply');
             }
         } catch (err) {
-            alert('Failed to apply. Please try again.');
+            showToast('error', 'Failed to apply. Please try again.');
         }
     };
 
@@ -110,6 +116,15 @@ const BusinessProfile = () => {
 
     return (
         <div className="max-w-4xl mx-auto animate-fade-in">
+            {/* Toast Notification */}
+            {toast && (
+                <Toast
+                    type={toast.type}
+                    message={toast.message}
+                    onClose={() => setToast(null)}
+                />
+            )}
+
             {/* Header */}
             <button
                 onClick={() => navigate(-1)}
