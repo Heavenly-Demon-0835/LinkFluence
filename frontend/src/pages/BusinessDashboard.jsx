@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Toast from '../components/Toast';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5000';
 
@@ -353,10 +354,11 @@ const BusinessDashboard = () => {
 
             {/* Toast Notification */}
             {toast && (
-                <div className={`fixed top-4 right-4 z-50 p-4 rounded-xl shadow-lg max-w-md animate-fade-in
-                    ${toast.type === 'success' ? 'success-box' : 'error-box'}`}>
-                    {toast.message}
-                </div>
+                <Toast
+                    type={toast.type}
+                    message={toast.message}
+                    onClose={() => setToast(null)}
+                />
             )}
 
             {/* Header */}

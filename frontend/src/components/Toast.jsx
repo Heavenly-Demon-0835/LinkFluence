@@ -49,7 +49,7 @@ const Toast = ({ message, type = 'info', onClose, duration = 4000 }) => {
 
     return (
         <div
-            className={`fixed top-6 right-6 z-[9999] flex items-center gap-3 px-5 py-4 rounded-2xl shadow-2xl text-white font-medium max-w-sm
+            className={`fixed top-4 left-4 right-4 sm:left-auto sm:right-6 z-[9999] flex items-center gap-3 px-4 py-3 sm:px-5 sm:py-4 rounded-xl sm:rounded-2xl shadow-2xl text-white font-medium sm:max-w-sm
                 ${config.bg}
                 ${isExiting ? 'animate-slide-out' : 'animate-slide-in'}
             `}
