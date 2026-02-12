@@ -96,18 +96,20 @@ const DiscoverCreators = () => {
 
                 {/* Search Bar */}
                 <div className="relative max-w-xl">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60">🔍</span>
+                    <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 10.5a7.5 7.5 0 0013.15 6.15z" />
+                    </svg>
                     <input
                         type="text"
                         placeholder="Search by name, category, bio..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-12 pr-10 py-3 rounded-xl bg-white/20 backdrop-blur text-white placeholder-white/60 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50"
+                        className="w-full pl-12 pr-10 py-4 rounded-2xl bg-white text-gray-900 placeholder-gray-400 border-none focus:outline-none focus:ring-4 focus:ring-white/40 shadow-lg text-base font-medium"
                     />
                     {searchQuery && (
                         <button
                             onClick={() => setSearchQuery('')}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-lg"
                         >
                             ✕
                         </button>

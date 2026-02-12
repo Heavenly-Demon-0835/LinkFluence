@@ -14,17 +14,22 @@ def search_businesses():
     
     query = {'role': 'business'}
     
+    and_conditions = []
+    
     # Text search filter (name, description, business_type)
     if q and q.strip():
         search_regex = {'$regex': q.strip(), '$options': 'i'}
-        query['$or'] = [
+        and_conditions.append({'$or': [
             {'name': search_regex},
             {'description': search_regex},
             {'business_type': search_regex}
-        ]
+        ]})
     
     if category and category != 'all':
-        query['business_type'] = category
+        and_conditions.append({'business_type': category})
+    
+    if and_conditions:
+        query['$and'] = and_conditions
     
     businesses = list(db.users.find(query).limit(100))
     

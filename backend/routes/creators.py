@@ -22,14 +22,17 @@ def search_creators():
     # Base query
     query = {'role': 'creator'}
     
+    # Collect $or conditions separately
+    and_conditions = []
+    
     # Text search filter (name, bio, category)
     if q and q.strip():
         search_regex = {'$regex': q.strip(), '$options': 'i'}
-        query['$or'] = [
+        and_conditions.append({'$or': [
             {'name': search_regex},
             {'bio': search_regex},
             {'category': search_regex}
-        ]
+        ]})
     
     # Category filter
     if category and category != 'all':
@@ -51,9 +54,13 @@ def search_creators():
             platform_conditions = []
             for platform in platform_list:
                 platform_conditions.append({
-                    f'social_links.{platform}': {'$exists': True, '$ne': '', '$ne': None}
+                    f'social_links.{platform}': {'$exists': True, '$ne': ''}
                 })
-            query['$or'] = platform_conditions
+            and_conditions.append({'$or': platform_conditions})
+    
+    # Combine all $and conditions
+    if and_conditions:
+        query['$and'] = and_conditions
     
     # Fetch creators
     creators = list(db.users.find(query).limit(200))
